@@ -1,0 +1,4 @@
+const TOGGLE_CART_HIDDEN: string = 'TOGGLE_CART_HIDDEN';
+const ADD_ITEM: string = 'ADD_ITEM';
+
+export { TOGGLE_CART_HIDDEN, ADD_ITEM };
