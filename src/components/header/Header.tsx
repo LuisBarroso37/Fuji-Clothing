@@ -10,9 +10,14 @@ import { IRootReducer } from '../../redux/root-reducer';
 import { IUserState } from '../../redux/user/user.reducer';
 import CartIcon from '../cart-icon/Cart-icon';
 import CartDropdown from '../cart-dropdown/Cart-dropdown';
-import { ICartState } from '../../redux/cart/cart.reducer';
+import { selectCurrentUser } from '../../redux/user/user.selectors';
+import { selectCartHidden } from '../../redux/cart/cart.selectors';
 
-type IHeaderProps = IUserState & ICartState;
+interface IHeaderState {
+  hidden: boolean;
+}
+
+type IHeaderProps = IUserState & IHeaderState;
 
 const Header: React.FC<IHeaderProps> = ({ currentUser, hidden }) => (
   <div className='header'>
@@ -42,9 +47,8 @@ const Header: React.FC<IHeaderProps> = ({ currentUser, hidden }) => (
 );
 
 const mapStateToProps = (state: IRootReducer) => ({
-  currentUser: state.user.currentUser,
-  hidden: state.cart.hidden,
-  cartItems: state.cart.cartItems,
+  currentUser: selectCurrentUser(state),
+  hidden: selectCartHidden(state)
 });
 
 export default connect(mapStateToProps)(Header);

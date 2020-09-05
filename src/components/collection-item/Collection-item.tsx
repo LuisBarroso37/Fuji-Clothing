@@ -5,9 +5,9 @@ import './Collection-item.scss';
 
 import { Item } from '../../pages/shop/Shop';
 import CustomButton from '../custom-button/Custom-button';
-import { addItem, IAddItem } from '../../redux/cart/cart.actions';
+import { addItem, ICartItem } from '../../redux/cart/cart.actions';
 
-interface ItemProp {
+export interface ItemProp {
   item: Item;
 }
 
@@ -30,7 +30,7 @@ const CollectionItem: React.FC<ICollectionItemProps> = ({ item, addItem }) => {
   );
 };
 
-const mapDispatchToProps = (dispatch: Dispatch<IAddItem>) => ({
+const mapDispatchToProps = (dispatch: Dispatch<ICartItem>) => ({
   addItem: (item: Item) => dispatch(addItem(item)),
 });
 

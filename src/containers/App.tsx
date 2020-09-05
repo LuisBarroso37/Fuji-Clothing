@@ -7,11 +7,14 @@ import './App.css';
 
 import Homepage from '../pages/homepage/Homepage';
 import ShopPage from '../pages/shop/Shop';
+import CheckoutPage from '../pages/checkout/Checkout';
 import Header from '../components/header/Header';
 import SignInAndSignUpPage from '../pages/sign-in-and-sign-up/sign-in-and-sign-up';
 import { auth, createUserProfileDocument } from '../firebase/firebase.utils';
 import { setCurrentUser, ISetCurrentUser } from '../redux/user/user.actions';
-import { IUser, IUserState } from '../redux/user/user.reducer';
+import { IUser } from '../redux/user/user.reducer';
+import { IRootReducer } from '../redux/root-reducer';
+import { selectCurrentUser } from '../redux/user/user.selectors';
 
 type AppProps = ReturnType<typeof mapDispatchToProps> &
   ReturnType<typeof mapStateToProps>;
@@ -49,6 +52,7 @@ class App extends React.Component<AppProps, {}> {
         <Switch>
           <Route exact path='/' component={Homepage} />
           <Route path='/shop' component={ShopPage} />
+          <Route exact path='/checkout' component={CheckoutPage} />
           <Route
             exact
             path='/signin'
@@ -66,8 +70,8 @@ class App extends React.Component<AppProps, {}> {
   }
 }
 
-const mapStateToProps = ({ user }: { user: IUserState }) => ({
-  currentUser: user.currentUser,
+const mapStateToProps = (state: IRootReducer) => ({
+  currentUser: selectCurrentUser(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<ISetCurrentUser>) => ({

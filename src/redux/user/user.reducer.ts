@@ -1,3 +1,5 @@
+import { Reducer } from 'redux';
+
 import { ISetCurrentUser } from './user.actions';
 import { SET_CURRENT_USER } from './user.constants';
 
@@ -11,7 +13,7 @@ export const INITIAL_STATE: IUserState = {
   currentUser: null,
 };
 
-const userReducer = (state = INITIAL_STATE, action: ISetCurrentUser) => {
+const userReducer: Reducer<IUserState ,ISetCurrentUser> = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case SET_CURRENT_USER:
       return {

@@ -1,22 +1,28 @@
-import { TOGGLE_CART_HIDDEN } from './cart.constants';
-import { ADD_ITEM } from './cart.constants';
-import { IToggleCartHidden, IAddItem } from './cart.actions';
+import { Reducer } from 'redux';
+
+import {
+  TOGGLE_CART_HIDDEN,
+  ADD_ITEM,
+  CLEAR_ITEM_FROM_CART,
+  REMOVE_ITEM,
+} from './cart.constants';
+import { IToggleCartHidden, ICartItem } from './cart.actions';
 import { Item } from '../../pages/shop/Shop';
-import { addItemToCart } from './cart.utils';
+import { addItemToCart, removeItemFromCart } from './cart.utils';
 
 export interface ICartState {
   hidden: boolean;
-  cartItems: Array<Item>
+  cartItems: Array<Item>;
 }
 
 const INITIAL_STATE: ICartState = {
   hidden: true,
-  cartItems: []
+  cartItems: [],
 };
 
-type ICartReducerActions = IToggleCartHidden & IAddItem;
+export type ICartReducerActions = IToggleCartHidden & ICartItem;
 
-const cartReducer = (state = INITIAL_STATE, action: ICartReducerActions) => {
+const cartReducer: Reducer<ICartState, ICartReducerActions> = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case TOGGLE_CART_HIDDEN:
       return {
@@ -26,7 +32,19 @@ const cartReducer = (state = INITIAL_STATE, action: ICartReducerActions) => {
     case ADD_ITEM:
       return {
         ...state,
-        cartItems: addItemToCart(state.cartItems, action.payload)
+        cartItems: addItemToCart(state.cartItems, action.payload) || [],
+      };
+    case CLEAR_ITEM_FROM_CART:
+      return {
+        ...state,
+        cartItems: state.cartItems.filter(
+          (cartItem) => cartItem.id !== action.payload.id
+        ) || [],
+      };
+    case REMOVE_ITEM:
+      return {
+        ...state,
+        cartItems: removeItemFromCart(state.cartItems, action.payload) || [],
       };
     default:
       return state;
