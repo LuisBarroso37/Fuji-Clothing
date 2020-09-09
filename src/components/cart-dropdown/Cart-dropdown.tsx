@@ -8,7 +8,7 @@ import './Cart-dropdown.scss';
 import CustomButton from '../custom-button/Custom-button';
 import CartItem from '../cart-item/Cart-item';
 import { IRootReducer } from '../../redux/root-reducer';
-import { Item } from '../../pages/shop/Shop';
+import { Item } from '../../redux/shop/shop.reducer';
 import { selectCartItems } from '../../redux/cart/cart.selectors';
 import {
   toggleCartHidden,

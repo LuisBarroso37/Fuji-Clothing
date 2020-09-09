@@ -4,7 +4,7 @@ import {
   CLEAR_ITEM_FROM_CART,
   REMOVE_ITEM,
 } from './cart.constants';
-import { Item } from '../../pages/shop/Shop';
+import { Item } from '../../redux/shop/shop.reducer';
 
 export interface IToggleCartHidden {
   type: typeof TOGGLE_CART_HIDDEN;

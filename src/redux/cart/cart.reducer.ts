@@ -7,7 +7,7 @@ import {
   REMOVE_ITEM,
 } from './cart.constants';
 import { IToggleCartHidden, ICartItem } from './cart.actions';
-import { Item } from '../../pages/shop/Shop';
+import { Item } from '../../redux/shop/shop.reducer';
 import { addItemToCart, removeItemFromCart } from './cart.utils';
 
 export interface ICartState {

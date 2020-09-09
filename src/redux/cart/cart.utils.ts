@@ -1,4 +1,4 @@
-import { Item } from '../../pages/shop/Shop';
+import { Item } from '../../redux/shop/shop.reducer';
 
 type ICartItems = Array<Item>;
 

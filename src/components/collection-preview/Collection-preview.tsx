@@ -2,7 +2,7 @@ import React from 'react';
 
 import './Collection-preview.scss';
 
-import { ICollection } from '../../pages/shop/Shop';
+import { ICollection } from '../../redux/shop/shop.reducer';
 import CollectionItem from '../collection-item/Collection-item';
 
 const CollectionPreview: React.FC<ICollection> = ({ title, items }) => (

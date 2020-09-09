@@ -11,7 +11,7 @@ import {
   removeItem,
   addItem,
 } from '../../redux/cart/cart.actions';
-import { Item } from '../../pages/shop/Shop';
+import { Item } from '../../redux/shop/shop.reducer';
 
 type ICheckoutItemProps = ItemProp & ReturnType<typeof mapDispatchToProps>;
 
