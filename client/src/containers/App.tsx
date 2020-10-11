@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
@@ -22,11 +22,8 @@ import {
 type AppProps = ReturnType<typeof mapStateToProps> &
   ReturnType<typeof mapDispatchToProps>;
 
-class App extends React.Component<AppProps, {}> {
-  unsubscribeFromAuth: any = null;
-
-  componentDidMount() {
-    const { checkUserSession } = this.props;
+const App: React.FC<AppProps> = ({ checkUserSession, currentUser }) => {
+  useEffect(() => {
     checkUserSession();
 
     //Add shop data to the firestore - Only done once which is why it is commented out
@@ -39,35 +36,29 @@ class App extends React.Component<AppProps, {}> {
         items: collection.items,
       }))
     );*/
-  }
+  }, [checkUserSession]);
 
-  componentWillUnmount() {
-    this.unsubscribeFromAuth();
-  }
-
-  render() {
-    return (
-      <div>
-        <Header />
-        <Switch>
-          <Route exact path='/' component={Homepage} />
-          <Route path='/shop' component={ShopPage} />
-          <Route exact path='/checkout' component={CheckoutPage} />
-          <Route
-            exact
-            path='/signin'
-            render={() =>
-              this.props.currentUser ? (
-                <Redirect to='/' />
-              ) : (
-                <SignInAndSignUpPage />
-              )
-            }
-          />
-        </Switch>
-      </div>
-    );
-  }
+  return (
+    <div>
+      <Header />
+      <Switch>
+        <Route exact path='/' component={Homepage} />
+        <Route path='/shop' component={ShopPage} />
+        <Route exact path='/checkout' component={CheckoutPage} />
+        <Route
+          exact
+          path='/signin'
+          render={() =>
+            currentUser ? (
+              <Redirect to='/' />
+            ) : (
+              <SignInAndSignUpPage />
+            )
+          }
+        />
+      </Switch>
+    </div>
+  );
 }
 
 const mapStateToProps = (state: IRootReducer) => ({

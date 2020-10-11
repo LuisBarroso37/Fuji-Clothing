@@ -6,14 +6,28 @@ interface IStripeButtonProps {
 }
 
 const StripeCheckoutButton: React.FC<IStripeButtonProps> = ({ price }) => {
-  // Stripe wants the price in cents
+  // Stripe needs the price in cents
   const priceForStripe = price * 100;
   const publishableKey =
     'pk_test_51HPT8EKNUjOSyNPA6I7RZNtwZyB1Ki2MzblpDJpAKfuiU1h18vt51GJBdPusdsWET3u8IhUwesAqyGTwqEyXStuO00Zp4fdUus';
 
   const onToken = (token: any) => {
-    console.log(token);
-    alert('Payment Succesful!');
+    fetch('/payment', {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      method: 'POST',
+      body: JSON.stringify({
+        amount: priceForStripe,
+        token
+      })
+    })
+    .then(res => alert('Payment successful'))
+    .catch(err => {
+      console.log(`Payment error: ${JSON.parse(err)}`);
+      alert('There was an issue with your payment. Please make sure you use the provided credit card');
+    });
   };
 
   return (
