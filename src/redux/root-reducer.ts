@@ -3,7 +3,6 @@ import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 import userReducer, { IUserState } from './user/user.reducer';
-import { ISetCurrentUser } from './user/user.actions';
 import cartReducer, {
   ICartState,
   ICartReducerActions,
@@ -26,7 +25,7 @@ export interface IRootReducer {
   shop: IShopState;
 }
 
-export type IRootActions = ISetCurrentUser | ICartReducerActions;
+export type IRootActions = ICartReducerActions;
 
 const rootReducer = combineReducers({
   user: userReducer,

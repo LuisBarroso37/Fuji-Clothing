@@ -1,20 +1,24 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 import './Sign-up.scss';
 
 import FormInput from '../form-input/Form-input';
 import CustomButton from '../custom-button/Custom-button';
-import { auth, createUserProfileDocument } from '../../firebase/firebase.utils';
+import { IEmailSignInPending, ISignInInfo, signUpPending } from '../../redux/user/user.actions';
+import { Dispatch } from 'redux';
 
-interface ISignUp {
+interface ISignUpState {
   displayName: string;
   email: string;
   password: string;
   confirmPassword: string;
 }
 
-class SignUp extends React.Component<{}, ISignUp> {
-  constructor(props: {}) {
+type ISignUpProps = ReturnType<typeof mapDispatchToProps>;
+
+class SignUp extends React.Component<ISignUpProps, ISignUpState> {
+  constructor(props: ISignUpProps) {
     super(props);
     this.state = {
       displayName: '',
@@ -26,12 +30,13 @@ class SignUp extends React.Component<{}, ISignUp> {
 
   handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    this.setState({ [name]: value } as Pick<ISignUp, keyof ISignUp>);
+    this.setState({ [name]: value } as Pick<ISignUpState, keyof ISignUpState>);
   };
 
   handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    const { signUpPending } = this.props;
     const { displayName, email, password, confirmPassword } = this.state;
 
     if (password !== confirmPassword) {
@@ -39,25 +44,7 @@ class SignUp extends React.Component<{}, ISignUp> {
       return;
     }
 
-    try {
-      if (email && password) {
-        const { user } = await auth.createUserWithEmailAndPassword(
-          email,
-          password
-        );
-
-        await createUserProfileDocument(user, { displayName });
-
-        this.setState({
-          displayName: '',
-          email: '',
-          password: '',
-          confirmPassword: '',
-        });
-      }
-    } catch (error) {
-      console.error(error);
-    }
+    signUpPending({ displayName, email, password });
   };
 
   render() {
@@ -106,4 +93,8 @@ class SignUp extends React.Component<{}, ISignUp> {
   }
 }
 
-export default SignUp;
+const mapDispatchToProps = (dispatch: Dispatch<IEmailSignInPending>) => ({
+  signUpPending: (userCredentials: ISignInInfo) => dispatch(signUpPending(userCredentials))
+});
+
+export default connect(null, mapDispatchToProps)(SignUp);

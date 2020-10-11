@@ -5,21 +5,31 @@ import { connect } from 'react-redux';
 import './Header.scss';
 
 import Logo from '../../assets/fuji.png';
-import { auth } from '../../firebase/firebase.utils';
 import { IRootReducer } from '../../redux/root-reducer';
 import { IUserState } from '../../redux/user/user.reducer';
 import CartIcon from '../cart-icon/Cart-icon';
 import CartDropdown from '../cart-dropdown/Cart-dropdown';
 import { selectCurrentUser } from '../../redux/user/user.selectors';
 import { selectCartHidden } from '../../redux/cart/cart.selectors';
+import {
+  IGoogleSignInPending,
+  signOutPending,
+} from '../../redux/user/user.actions';
+import { Dispatch } from 'redux';
 
 interface IHeaderState {
   hidden: boolean;
 }
 
-type IHeaderProps = IUserState & IHeaderState;
+type IHeaderProps = IUserState &
+  IHeaderState &
+  ReturnType<typeof mapDispatchToProps>;
 
-const Header: React.FC<IHeaderProps> = ({ currentUser, hidden }) => (
+const Header: React.FC<IHeaderProps> = ({
+  currentUser,
+  hidden,
+  signOutPending,
+}) => (
   <div className='header'>
     <Link className='logo-container' to='/'>
       <img src={Logo} alt='Logo' className='logo' />
@@ -32,7 +42,7 @@ const Header: React.FC<IHeaderProps> = ({ currentUser, hidden }) => (
         CONTACT
       </Link>
       {currentUser ? (
-        <div className='option' onClick={() => auth.signOut()}>
+        <div className='option' onClick={signOutPending}>
           SIGN OUT
         </div>
       ) : (
@@ -48,7 +58,11 @@ const Header: React.FC<IHeaderProps> = ({ currentUser, hidden }) => (
 
 const mapStateToProps = (state: IRootReducer) => ({
   currentUser: selectCurrentUser(state),
-  hidden: selectCartHidden(state)
+  hidden: selectCartHidden(state),
 });
 
-export default connect(mapStateToProps)(Header);
+const mapDispatchToProps = (dispatch: Dispatch<IGoogleSignInPending>) => ({
+  signOutPending: () => dispatch(signOutPending()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header);

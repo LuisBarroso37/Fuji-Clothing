@@ -1,18 +1,27 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 
 import './Sign-in.scss';
 
 import FormInput from '../form-input/Form-input';
 import CustomButton from '../custom-button/Custom-button';
-import { auth, signInWithGoogle } from '../../firebase/firebase.utils';
+import {
+  googleSignInPending,
+  IGoogleSignInPending,
+  emailSignInPending,
+  IEmailSignInPending,
+} from '../../redux/user/user.actions';
 
 interface ISignIn {
   email: string;
   password: string;
 }
 
-class SignIn extends React.Component<{}, ISignIn> {
-  constructor(props: {}) {
+type ISignInProps = ReturnType<typeof mapDispatchToProps>;
+
+class SignIn extends React.Component<ISignInProps, ISignIn> {
+  constructor(props: ISignInProps) {
     super(props);
     this.state = {
       email: '',
@@ -28,23 +37,14 @@ class SignIn extends React.Component<{}, ISignIn> {
   handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    const { emailSignInPending } = this.props;
     const { email, password } = this.state;
 
-    try {
-      if (email && password) {
-        await auth.signInWithEmailAndPassword(email, password);
-
-        this.setState({
-          email: '',
-          password: '',
-        });
-      }
-    } catch (error) {
-      console.error(error);
-    }
+    emailSignInPending(email, password);
   };
 
   render() {
+    const { googleSignInPending } = this.props;
     return (
       <div className='sign-in'>
         <h2>I already have an account</h2>
@@ -71,7 +71,7 @@ class SignIn extends React.Component<{}, ISignIn> {
             <CustomButton
               type='button'
               isGoogleSignIn
-              onClick={signInWithGoogle}
+              onClick={googleSignInPending}
             >
               Sign in with Google
             </CustomButton>
@@ -82,4 +82,12 @@ class SignIn extends React.Component<{}, ISignIn> {
   }
 }
 
-export default SignIn;
+type IMapDispatchToProps = IGoogleSignInPending | IEmailSignInPending;
+
+const mapDispatchToProps = (dispatch: Dispatch<IMapDispatchToProps>) => ({
+  googleSignInPending: () => dispatch(googleSignInPending()),
+  emailSignInPending: (email: string, password: string) =>
+    dispatch(emailSignInPending({ email, password })),
+});
+
+export default connect(null, mapDispatchToProps)(SignIn);

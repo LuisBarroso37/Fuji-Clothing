@@ -10,35 +10,35 @@ import ShopPage from '../pages/shop/Shop';
 import CheckoutPage from '../pages/checkout/Checkout';
 import Header from '../components/header/Header';
 import SignInAndSignUpPage from '../pages/sign-in-and-sign-up/sign-in-and-sign-up';
-import { auth, createUserProfileDocument } from '../firebase/firebase.utils';
-import { setCurrentUser, ISetCurrentUser } from '../redux/user/user.actions';
-import { IUser } from '../redux/user/user.reducer';
 import { IRootReducer } from '../redux/root-reducer';
 import { selectCurrentUser } from '../redux/user/user.selectors';
+import {
+  checkUserSession,
+  IGoogleSignInPending,
+} from '../redux/user/user.actions';
+//import { addCollectionAndDocuments } from '../firebase/firebase.utils';
+//import { selectCollectionsForPreview } from '../redux/shop/shop.selectors';
 
-type AppProps = ReturnType<typeof mapDispatchToProps> &
-  ReturnType<typeof mapStateToProps>;
+type AppProps = ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps>;
 
 class App extends React.Component<AppProps, {}> {
   unsubscribeFromAuth: any = null;
 
   componentDidMount() {
-    const { setCurrentUser } = this.props;
+    const { checkUserSession } = this.props;
+    checkUserSession();
 
-    this.unsubscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
-      const userRef = await createUserProfileDocument(userAuth);
+    //Add shop data to the firestore - Only done once which is why it is commented out
+    // Destructure collectionsArray from this.props
 
-      if (userRef) {
-        userRef.onSnapshot((snapshot) => {
-          setCurrentUser({
-            id: snapshot.id,
-            ...snapshot.data(),
-          });
-        });
-      } else {
-        setCurrentUser(userAuth);
-      }
-    });
+    /*addCollectionAndDocuments(
+      'collections',
+      collectionsArray.map((collection) => ({
+        title: collection.title,
+        items: collection.items,
+      }))
+    );*/
   }
 
   componentWillUnmount() {
@@ -72,10 +72,11 @@ class App extends React.Component<AppProps, {}> {
 
 const mapStateToProps = (state: IRootReducer) => ({
   currentUser: selectCurrentUser(state),
+  //collectionsArray: selectCollectionsForPreview(state),
 });
 
-const mapDispatchToProps = (dispatch: Dispatch<ISetCurrentUser>) => ({
-  setCurrentUser: (user: IUser) => dispatch(setCurrentUser(user)),
+const mapDispatchToProps = (dispatch: Dispatch<IGoogleSignInPending>) => ({
+  checkUserSession: () => dispatch(checkUserSession()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
