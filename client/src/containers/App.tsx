@@ -1,15 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, lazy, Suspense } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
 import './App.css';
 
-import Homepage from '../pages/homepage/Homepage';
-import ShopPage from '../pages/shop/Shop';
-import CheckoutPage from '../pages/checkout/Checkout';
+import ErrorBoundary from '../components/error-boundary/Error-boundary';
+import Spinner from '../components/spinner/Spinner';
 import Header from '../components/header/Header';
-import SignInAndSignUpPage from '../pages/sign-in-and-sign-up/sign-in-and-sign-up';
 import { IRootReducer } from '../redux/root-reducer';
 import { selectCurrentUser } from '../redux/user/user.selectors';
 import {
@@ -18,6 +16,13 @@ import {
 } from '../redux/user/user.actions';
 //import { addCollectionAndDocuments } from '../firebase/firebase.utils';
 //import { selectCollectionsForPreview } from '../redux/shop/shop.selectors';
+
+const Homepage = lazy(() => import('../pages/homepage/Homepage'));
+const ShopPage = lazy(() => import('../pages/shop/Shop'));
+const CheckoutPage = lazy(() => import('../pages/checkout/Checkout'));
+const SignInAndSignUpPage = lazy(
+  () => import('../pages/sign-in-and-sign-up/sign-in-and-sign-up')
+);
 
 type AppProps = ReturnType<typeof mapStateToProps> &
   ReturnType<typeof mapDispatchToProps>;
@@ -42,24 +47,24 @@ const App: React.FC<AppProps> = ({ checkUserSession, currentUser }) => {
     <div>
       <Header />
       <Switch>
-        <Route exact path='/' component={Homepage} />
-        <Route path='/shop' component={ShopPage} />
-        <Route exact path='/checkout' component={CheckoutPage} />
-        <Route
-          exact
-          path='/signin'
-          render={() =>
-            currentUser ? (
-              <Redirect to='/' />
-            ) : (
-              <SignInAndSignUpPage />
-            )
-          }
-        />
+        <ErrorBoundary>
+          <Suspense fallback={<Spinner />}>
+            <Route exact path='/' component={Homepage} />
+            <Route path='/shop' component={ShopPage} />
+            <Route exact path='/checkout' component={CheckoutPage} />
+            <Route
+              exact
+              path='/signin'
+              render={() =>
+                currentUser ? <Redirect to='/' /> : <SignInAndSignUpPage />
+              }
+            />
+          </Suspense>
+        </ErrorBoundary>
       </Switch>
     </div>
   );
-}
+};
 
 const mapStateToProps = (state: IRootReducer) => ({
   currentUser: selectCurrentUser(state),

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './With-spinner.scss';
+import Spinner from '../spinner/Spinner';
 
 interface IWithSpinnerOtherProps {
   [x: string]: any;
@@ -12,17 +12,10 @@ interface ILoading {
 
 type IWithSpinnerProps = ILoading & IWithSpinnerOtherProps;
 
-const WithSpinner = (WrappedComponent: React.FC<any>) => {
-  const Spinner = ({ isLoading, ...otherProps }: IWithSpinnerProps) => {
-    return isLoading ? (
-      <div className='spinner-overlay'>
-        <div className='spinner-container' />
-      </div>
-    ) : (
-      <WrappedComponent {...otherProps} />
-    );
-  };
-  return Spinner;
-};
+const WithSpinner = (WrappedComponent: React.FC<any>) => ({
+  isLoading,
+  ...otherProps
+}: IWithSpinnerProps) =>
+  isLoading ? <Spinner /> : <WrappedComponent {...otherProps} />;
 
 export default WithSpinner;

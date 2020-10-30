@@ -19,6 +19,11 @@
     position: absolute;
     top: 255px;
     display: none;
+
+    @media screen and (max-width: 600px) {
+      display: block;
+      opacity: 0.9;
+    }
   }
 
   &:hover {
